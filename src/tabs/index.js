@@ -15,15 +15,31 @@ Component({
     tabWidth: 0.25,
   },
   didMount() {
-    const { tabs } = this.props;
+    const { tabs, activeTab } = this.props;
+
+    this.setData({
+      current: activeTab,
+    });
+
     my.getSystemInfo({
       success: (res) => {
         this.setData({
           windowWidth: res.windowWidth,
           tabWidth: tabs.length > 3 ? 0.25 : 1 / tabs.length,
         });
+
+        this.moveScrollBar(activeTab);
       },
     });
+  },
+  didUpdate(prevProps) {
+    const { activeTab } = prevProps;
+    if (activeTab !== this.props.current) {
+      this.setData({
+        current: activeTab,
+      });
+      this.moveScrollBar(activeTab);
+    }
   },
   methods: {
     handleSwiperChange(e) {
